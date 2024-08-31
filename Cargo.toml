@@ -1,0 +1,8 @@
+[package]
+name = "eth-indexer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+alloy-json-rpc = "0.3.0"
+alloy-rpc-client = "0.3.0"
