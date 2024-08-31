@@ -18,6 +18,7 @@ pub struct Poller<Params, Resp> {
     /// Config
     channel_size: usize,
     poll_interval: Duration,
+    limit: usize,
 
     _pd: PhantomData<fn() -> Resp>,
 }
@@ -29,4 +30,62 @@ where
     Params: RpcParam + 'static,
     Resp: RpcReturn + Clone,
 {
+    /// Create a new poller
+    pub fn new(
+        client: ReqwestClient,
+        method: impl Into<Cow<'static, str>>,
+        params: Params,
+        poll_interval: Duration,
+    ) -> Self {
+        Self {
+            client,
+            method: method.into(),
+            params,
+            channel_size: 16,
+            poll_interval,
+            limit: usize::MAX,
+            _pd: PhantomData,
+        }
+    }
+
+    pub const fn channel_size(&self) -> usize {
+        self.channel_size
+    }
+
+    pub fn set_channel_size(&mut self, channel_size: usize) {
+        self.channel_size = channel_size;
+    }
+
+    pub fn with_channel_size(mut self, channel_size: usize) -> Self {
+        self.set_channel_size(channel_size);
+        self
+    }
+
+    pub const fn limit(&self) -> usize {
+        self.limit
+    }
+
+    pub fn set_limit(&mut self, limit: usize) {
+        self.limit = limit;
+    }
+
+    pub fn with_limit(mut self, limit: usize) -> Self {
+        self.set_limit(limit);
+        self
+    }
+
+    pub const fn poll_interval(&self) -> Duration {
+        self.poll_interval
+    }
+
+    pub fn set_poll_interval(&mut self, poll_interval: Duration) {
+        self.poll_interval = poll_interval;
+    }
+
+    pub fn with_poll_interval(mut self, poll_interval: Duration) -> Self {
+        self.set_poll_interval(poll_interval);
+        self
+    }
+
+    pub fn spawn()
 }
