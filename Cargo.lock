@@ -624,6 +624,9 @@ version = "0.1.0"
 dependencies = [
  "alloy-json-rpc",
  "alloy-rpc-client",
+ "futures",
+ "tokio",
+ "tokio-stream",
 ]
 
 [[package]]

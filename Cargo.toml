@@ -6,3 +6,6 @@ edition = "2021"
 [dependencies]
 alloy-json-rpc = "0.3.0"
 alloy-rpc-client = "0.3.0"
+futures = "0.3.30"
+tokio = "1.40.0"
+tokio-stream = "0.1.15"
