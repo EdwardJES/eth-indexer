@@ -1,18 +1,18 @@
-use ethers::types::U64;
+use dotenv;
 use futures::StreamExt;
-
-mod client;
+use indexer::Indexer;
+mod indexer;
 
 #[tokio::main]
 async fn main() {
-    let provider_str = "https://rpc.testnet.immutable.com/";
-    let client = client::Client::new(provider_str);
+    let provider_str = dotenv::var("PROVIDER_URL").expect("PROVIDER must be set");
+    let indexer = Indexer::new(&provider_str);
 
-    let channel = client.poll_blocks();
-    let mut stream = channel.into_stream();
+    let interval = 2;
+    let mut stream = indexer.client.block_stream(interval);
 
     // consume stream
     while let Some(response) = stream.next().await {
-        println!("{:?}", response);
+        println!("{:#?}", response);
     }
 }
