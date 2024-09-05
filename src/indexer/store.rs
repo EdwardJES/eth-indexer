@@ -160,13 +160,16 @@ mod tests {
             let block = create_block();
             store.save_block(block).expect("Failed to save block");
 
-            // let deposits = store.connection()
-            // .prepare(r#"SELECT block_number, tx_hash, root_token, child_token, "from", "to", amount FROM withdrawals"#)?
-            // .query_map([], |_| {
-            //     Ok(())
-            // }).unwrap()
-            // .count();
-            // assert_eq!(deposits, 0);
+            let mut conn = store.connection();
+            // select all blocks
+            let blocks = conn
+                .prepare(r#"SELECT * FROM BLOCKS"#)
+                .unwrap()
+                .query_map([], |_| Ok(()))
+                .unwrap()
+                .count();
+
+            assert_eq!(blocks, 0);
         });
     }
 }
