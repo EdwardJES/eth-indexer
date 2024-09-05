@@ -12,10 +12,9 @@ pub struct Store {
 
 impl Store {
     pub fn new(db_path: impl AsRef<Path>) -> Self {
-        File::create(db_path).expect("Failed to ceate db file");
         Self {
             db: Arc::new(Mutex::new(
-                Connection::open("indexer.db").expect("Failed to open db"),
+                Connection::open(db_path).expect("Failed to open db"),
             )),
         }
     }
@@ -58,15 +57,11 @@ impl Store {
     }
 
     pub fn save_block(&mut self, block: Block) -> Result<()> {
-        // TODO we likely wouldn't panic here but log the error and try give as much context
         let block_num = block
             .header
             .number
             .ok_or(eyre!("failed to get block number"))?;
-        let hash = block
-            .header
-            .hash
-            .ok_or(eyre!("failed to get block hash"))?;
+        let hash = block.header.hash.ok_or(eyre!("failed to get block hash"))?;
         let mut conn = self.connection();
         let tx = conn.transaction()?;
         tx.execute(
@@ -141,12 +136,12 @@ mod tests {
                   "validatorIndex":"0x8b2b6",
                   "address":"0x7cd1122e8e118b12ece8d25480dfeef230da17ff",
                   "amount":"0x1161f10"
-
+                }
             ],
             "withdrawalsRoot":"0x360c33f20eeed5efbc7d08be46e58f8440af5db503e40908ef3d1eb314856ef7"
          }"#;
 
-        serde_json::from_str::<Block>pect("Failed to generate test block")
+        serde_json::from_str(s).expect("Failed to generate test block")
     }
 
     fn with_temp_store<F>(f: F)
